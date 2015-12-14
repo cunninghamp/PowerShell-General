@@ -45,7 +45,7 @@ param (
 	)
 
 #I'm using the DynDNS tool because it returns a very plain result that is easy to parse.
-$url = "https://api.ipify.org/?format=json).ip"
+$url = "http://checkip.dyndns.com"
 
 #If a remote computer was specified then a PS remote session is used. Otherwies the web request
 #is run locally.
@@ -60,8 +60,20 @@ else
     $webrequest = Invoke-WebRequest $url -UseBasicParsing
 }
 
-#We just want the IP from the data that is returned by Invoke-WebRequest.
-$ip = $webrequest.Content
+#We just want the plain HTML from the web request.
+$RawHtml = $webrequest.Content
+
+#I'm using this method to parse the result because I was seeing two different results
+#come back for local computers (ParsedHtml : mshtml.HTMLDocumentClass) vs
+#remote computers (ParsedHtml : System.__ComObject).
+
+$HtmlObject = New-Object -ComObject "HTMLfile"
+$HtmlObject.IHTMLDocument2_Write($RawHtml)
+
+$result = $HtmlObject.body.innerHTML
+
+#Tidy the result so just the IP is left
+$ip = $result.Split(":")[1].Trim()
 
 #Kill a puppy with Write-Host, but you can repurpose this code to use $ip
 #any way you like.
