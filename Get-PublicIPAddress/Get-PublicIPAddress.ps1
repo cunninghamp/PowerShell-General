@@ -44,24 +44,21 @@ param (
 
 	)
 
-#I'm using the DynDNS tool because it returns a very plain result that is easy to parse.
-$url = "https://api.ipify.org/?format=json).ip"
+#A useful API for retrieving your public IP address
+$url = "https://api.ipify.org/?format=json"
 
-#If a remote computer was specified then a PS remote session is used. Otherwies the web request
+#If a remote computer was specified then a PS remote session is used. Otherwies the query
 #is run locally.
 if ($Computer)
 {
     $credential = Get-Credential -Message "Enter credentials for remoting to $Computer"
-    $webrequest = Invoke-Command -ComputerName $Computer -Credential $credential -ScriptBlock {Invoke-WebRequest $using:url -UseBasicParsing}
+    $ip = Invoke-Command -ComputerName $Computer -Credential $credential -ScriptBlock {(Invoke-RestMethod $using:url).ip}
 }
 else
 {
     
-    $webrequest = Invoke-WebRequest $url -UseBasicParsing
+    $ip = (Invoke-RestMethod $url).ip
 }
-
-#We just want the IP from the data that is returned by Invoke-WebRequest.
-$ip = $webrequest.Content
 
 #Kill a puppy with Write-Host, but you can repurpose this code to use $ip
 #any way you like.
