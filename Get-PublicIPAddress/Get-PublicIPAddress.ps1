@@ -4,7 +4,7 @@ Get-PublicIPAddress.ps1 - Retrieve the public IP address of local or remote comp
 
 .DESCRIPTION 
 This PowerShell script will retrieve the public IP address of the local computer, or
-a remote computer, by querying http://checkip.dyndns.com
+a remote computer.
 
 .OUTPUTS
 Results are output to console.
@@ -34,6 +34,7 @@ Find me on:
 
 Change Log
 V1.00, 14/12/2015 - Initial version
+V1.01, 15/12/2015 - Changed to REST query against different API
 #>
 
 [CmdletBinding()]
